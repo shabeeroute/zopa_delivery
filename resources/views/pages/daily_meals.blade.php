@@ -50,7 +50,7 @@
                     <p class="text-danger">You are on Leave. No Daily Meal for today.</p>
                 @else
                     @if($mealsLeft>0)
-                        <p class="text-success">Your meal on process will be updated here shortly.</p>
+                        <p class="text-success">Your meal is on process will be updated here shortly.</p>
                     @else
                         <p class="text-warning">Your Meal Wallet is empty. <a href="{{ route('front.meal.plan') }}">Buy a Meal Plan</a></p>
                     @endif
