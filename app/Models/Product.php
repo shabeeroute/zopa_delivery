@@ -6,14 +6,10 @@ use App\Http\Utilities\Utility;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Product extends Model
 {
     use HasFactory;
-    use LogsActivity;
-
     const DIR_STORAGE = 'storage/products/';
     const DIR_PUBLIC = 'products/';
 
@@ -21,56 +17,90 @@ class Product extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['status'=>'boolean', 'is_approved'=>'boolean', 'images' => 'array'];
+    protected $casts = ['status'=>'boolean'];
 
     /**
      * Boot the model.
      */
-
-     public function getActivitylogOptions(): LogOptions
+    protected static function boot()
     {
-        return LogOptions::defaults()
-        ->logOnly(['id', 'name'])
-        ->setDescriptionForEvent(fn(string $eventName) => "The Product has been {$eventName}");
+        parent::boot();
+
+        static::created(function ($model) {
+            $model->slug = $model->createSlug($model->name);
+            $model->save();
+        });
+    }
+
+    private function createSlug($name){
+        if (static::whereSlug($slug = Str::slug($name))->exists()) {
+            $max = static::whereName($name)->latest('id')->skip(1)->value('slug');
+
+            if (is_numeric($max[-1])) {
+                return preg_replace_callback('/(\d+)$/', function ($mathces) {
+                    return $mathces[1] + 1;
+                }, $max);
+            }
+
+            return "{$slug}-2";
+        }
+
+        return $slug;
+    }
+
+    public function brand()
+    {
+        return $this->belongsTO(Brand::class, 'brand_id', 'id');
+    } // TODO: Check whether brand needed?
+
+    public function sub_category()
+    {
+        return $this->belongsTO(SubCategory::class, 'sub_category_id', 'id');
     }
 
     public function scopeActive($query) {
         return $query->where('status',Utility::ITEM_ACTIVE);
+    } // TODO: check the how to use it.
+
+    public  function tax()
+    {
+        return $this->belongsTo(TaxType::class,'tax_type_id');
     }
 
-    public function scopeOldestById($query) {
-        return $query->orderBy('id', 'asc');
-    }
-
-    // public function ingredients()
-    // {
-    //     return $this->hasMany(Component::class);
+    // public function sub_categories() {
+    //     return $this->belongsToMany(SubCategory::class)->withTimestamps();
     // }
 
-    public function ingredients()
-    {
-        return $this->belongsToMany(Component::class, 'component_product')->withPivot('id','cost','o_cost')->withTimestamps();
+    public function purchases() {
+        return $this->belongsToMany(Purchase::class)->withTimestamps();
     }
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+    public function branch() {
+        return $this->belongsTo(Branch::class);
     }
 
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    public function product_items() {
+        return $this->hasMany(ProductItem::class);
     }
 
-    public function branch()
-    {
-        return $this->belongsTO(Branch::class);
+    // public function getStockAttribute() {
+    //     $stock = 0;
+    //     foreach($this->branches as $branch_pivot) {
+    //         $stock += $branch_pivot->pivot->quantity;
+    //     }
+
+    //     return $stock;
+    // }
+
+    public function rentTerms() {
+        return $this->belongsToMany(RentTerm::class)->withPivot('price')->withTimestamps();
     }
 
-    public function getTotalPriceAttribute()
-    {
-        $total_ingredients_cost = $this->ingredients()->sum('component_product.cost');
-        return $total_ingredients_cost+$this->profit;
+    public function getCategoryNamesAttribute() {
+        $name = [];
+        foreach($this->categories as $category) {
+            $name[] = $category->name;
+        }
+        return implode(', ',$name);
     }
 }

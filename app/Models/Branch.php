@@ -14,39 +14,29 @@ class Branch extends Authenticatable
 
     protected $hidden = ['id'];
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name', 'name_ar', 'image','location','location_ar', 'phone', 'email', 'user_id', 'status','slug'
+    ];
 
     protected $casts = ['status'=>'boolean'];
 
     public function products() {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class)->withPivot('quantity')->withTimestamps();
     }
 
-    public function customers() {
-        return $this->hasMany(Customer::class);
-    }
-
-    // public function sales() {
-    //     return $this->hasMany(Sale::class);
-    // }
-
-    public function users() {
-        return $this->hasMany(User::class);
-    }
-
-    public function district()
+    public function sreviews()
     {
-        return $this->belongsTo(District::class);
+        return $this->morphMany(SupplierReview::class, 'sreviewable');
     }
 
-    public function state()
+    public function creviews()
     {
-        return $this->belongsTo(State::class);
+        return $this->morphMany(CustomerReview::class, 'creviewable');
     }
 
-    public function bank()
+    public function customer()
     {
-        return $this->belongsTo(Bank::class);
+        return $this->belongsTO(Customer::class);
     }
 
 }

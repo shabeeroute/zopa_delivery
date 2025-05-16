@@ -1,10 +1,10 @@
 
 
 /*
-Template Name: ZOPA - Food Drop
-Author: Web Mahal Web Service
-Website: https://webmahal.com/
-Contact: webmahal@gmail.com
+Template Name: Dason - Admin & Dashboard Template
+Author: Themesdesign
+Website: https://themesdesign.in/
+Contact: themesdesign.in@gmail.com
 File: Toastr init js
 */
 

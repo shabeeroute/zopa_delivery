@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('layouts.master')
 @section('title') @lang('translation.User_List') @endsection
 @section('css')
 <link href="{{ URL::asset('/assets/libs/datatables.net-bs4/datatables.net-bs4.min.css') }}" rel="stylesheet">
@@ -6,16 +6,12 @@
 
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
+@component('components.breadcrumb')
 @slot('li_1') @lang('translation.Catalogue_Manage') @endslot
 @slot('li_2') @lang('translation.Category_Manage') @endslot
-@slot('title') @lang('translation.Category_List') @endslot
+@slot('title') @lang('translation.Categories') @endslot
 @endcomponent
-@if(session()->has('success'))
-<div class="alert alert-success alert-top-border alert-dismissible fade show" role="alert">
-    <i class="mdi mdi-check-all me-3 align-middle text-success"></i><strong>Success</strong> - {{ session()->get('success') }}
-</div>
-@endif
+@if(session()->has('success')) <p class="text-success">{{ session()->get('success') }} @endif</p>
 <div class="row">
     <div class="col-lg-12">
         <div class="card mb-0">
@@ -71,7 +67,9 @@
                                  </div>
                              </th>
                              <th scope="col">Name</th>
-                             <th scope="col">Products</th>
+                             <th scope="col">Rental Type</th>
+                             <th scope="col">Sub Categories</th>
+
                              <th style="width: 80px; min-width: 80px;">Action</th>
                          </tr>
                          </thead>
@@ -96,13 +94,20 @@
                                         </div>
                                         @endif
 
-                                        <a href="{{ route('admin.categories.edit',encrypt($category->id))}}" class="">{{ $category->name }}</a>
+                                        <a href="#" class="text-body">{{ $category->name }}</a>
                                     </td>
-
                                     <td>
-                                        <a target="_blank" href="{{ route('admin.categories.products',encrypt($category->id))}}" class="">View Products</a>
+                                        {{ $category->rental_type->name }}
                                     </td>
-
+                                    <td>
+                                        @php
+                                            $sub_categories =[];
+                                            foreach ($category->sub_categories as $sub_category) {
+                                                $sub_categories[] = $sub_category->name;
+                                            }
+                                        @endphp
+                                        {{ implode(', ', $sub_categories) }}
+                                    </td>
 
                                     <td>
                                         <div class="dropdown">
@@ -117,7 +122,7 @@
                                                     @csrf
                                                     <input type="hidden" name="_method" value="DELETE" />
                                                 </form>
-                                                <li><a class="dropdown-item" href="{{ route('admin.categories.changeStatus',encrypt($category->id))}}">{!! $category->status?'<i class="fas fa-power-off font-size-16 text-danger me-1"></i> Unpublish':'<i class="fas fa-circle-notch font-size-16 text-primary me-1"></i> Publish'!!}</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('admin.categories.changeStatus',encrypt($category->id))}}"><i class="mdi mdi-cursor-pointer font-size-16 text-success me-1"></i> {{ $category->status?'Deactivate':'Activate'}}</a></li>
                                             </ul>
                                         </div>
                                     </td>

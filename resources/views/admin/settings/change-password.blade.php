@@ -1,13 +1,12 @@
-@extends('admin.layouts.master')
+@extends('layouts.master')
 @section('title') @lang('translation.Change_Password') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/select2/select2.min.css') }}" rel="stylesheet">
 <link href="{{ URL::asset('assets/libs/dropzone/dropzone.min.css') }}" rel="stylesheet">
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
-@slot('li_1') @lang('translation.Account_Settings') @endslot
-@slot('li_2') @lang('translation.Settings') @endslot
+@component('components.breadcrumb')
+@slot('li_1') @lang('translation.Settings') @endslot
 @slot('title') @lang('translation.Change_Password') @endslot
 @endcomponent
 <div class="row">

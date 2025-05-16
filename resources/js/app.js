@@ -1,9 +1,9 @@
 /*
-Template Name: ZOPA - Bootstrap 5 Admin & Dashboard Template
-Author: Web Mahal Web Service
+Template Name: Dason - Bootstrap 5 Admin & Dashboard Template
+Author: Themesdesign
 Version: 1.2.0.
-Website: https://webmahal.com/
-Contact: webmahal@gmail.com
+Website: https://themesdesign.in/
+Contact: themesdesign.in@gmail.com
 File: Main Js File
 */
 
@@ -11,7 +11,7 @@ File: Main Js File
 
     'use strict';
 
-    var language = localStorage.getItem('ZOPA-language');
+    var language = localStorage.getItem('Dason-language');
     // Default Language
     var default_lang = 'en';
 
@@ -28,8 +28,8 @@ File: Main Js File
             } else if (lang == 'ru') {
                 document.getElementById("header-lang-img").src = "assets/images/flags/russia.jpg";
             }
-            localStorage.setItem('ZOPA-language', lang);
-            language = localStorage.getItem('ZOPA-language');
+            localStorage.setItem('Dason-language', lang);
+            language = localStorage.getItem('Dason-language');
             getLanguage();
         }
     }

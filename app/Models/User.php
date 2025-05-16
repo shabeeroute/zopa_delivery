@@ -7,19 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-// use Shanmuga\LaravelEntrust\Traits\LaravelEntrustUserTrait;
+use Shanmuga\LaravelEntrust\Traits\LaravelEntrustUserTrait;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-    // use LaravelEntrustUserTrait;
-    use HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, LaravelEntrustUserTrait;
 
     const DIR_STORAGE = 'storage/users/';
     const DIR_PUBLIC = 'users/';
-
-    protected $guard = 'web';
 
     /**
      * The attributes that are mass assignable.
@@ -27,14 +22,17 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'phone',
         'password',
+        'location',
+        'address',
         'avatar',
         'status',
-        'created_by',
-        'branch_id'
+        'utype',
+        'created_by'
     ];
 
     /**
@@ -57,13 +55,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function branch()
-    {
-        return $this->belongsTO(Branch::class);
+    public function getNameAttribute() {
+        return $this->first_name. ' ' . $this->last_name;
     }
-
-    // public function roles()
-    // {
-    //     return $this->belongsToMany(Role::class)->withPivot('user_type')->where('roles.user_type','user');
-    // }
 }

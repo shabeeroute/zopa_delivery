@@ -40,8 +40,29 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'seller' => [
+            'driver' => 'session',
+            'provider' => 'sellers',
+        ],
+
         'customer' => [
             'driver' => 'session',
+            'provider' => 'customers',
+        ],
+
+        'branch' => [
+            'driver' => 'session',
+            'provider' => 'branches',
+        ],
+
+        'driver' => [
+            'driver' => 'session',
+            'provider' => 'drivers',
+        ],
+
+        'customer-api' => [
+            'driver' => 'sanctum',
             'provider' => 'customers',
         ],
     ],
@@ -69,9 +90,24 @@ return [
             'model' => App\Models\User::class,
         ],
 
+        'sellers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Seller::class,
+        ],
+
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
+        ],
+
+        'branches' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Branch::class,
+        ],
+
+        'drivers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Driver::class,
         ],
 
         // 'users' => [

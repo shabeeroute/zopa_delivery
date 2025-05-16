@@ -1,33 +1,18 @@
-@extends('admin.layouts.master')
-@section('title') @lang('translation.Product_List') @endsection
+{{-- @extends(request()->routeIs('admin.*') ? 'layouts.master' : 'seller.layouts.master') --}}
+@extends('layouts.master')
+@section('title') @lang('translation.Product_Manage_List') @endsection
 @section('css')
 <link href="{{ URL::asset('/assets/libs/datatables.net-bs4/datatables.net-bs4.min.css') }}" rel="stylesheet">
 <link href="{{ URL::asset('assets/libs/datatables.net-responsive-bs4/datatables.net-responsive-bs4.min.css') }}" rel="stylesheet" type="text/css" />
 
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
+@component('components.breadcrumb')
 @slot('li_1') @lang('translation.Catalogue_Manage') @endslot
 @slot('li_2') @lang('translation.Product_Manage') @endslot
-@slot('title') @lang('translation.Product_List') @endslot
+@slot('title') @lang('translation.Product_Manage_List') @endslot
 @endcomponent
-@if(session()->has('success'))
-<div class="alert alert-success alert-top-border alert-dismissible fade show" role="alert">
-    <i class="mdi mdi-check-all me-3 align-middle text-success"></i><strong>Success</strong> - {{ session()->get('success') }}
-</div>
-@endif
-<div class="row">
-    <div class="col-lg-12">
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link @if($is_approved==Utility::ITEM_INACTIVE) active @endif" @if($is_approved==Utility::ITEM_INACTIVE)aria-current="page"@endif href="{{ route('admin.products.index','status='.encrypt(Utility::ITEM_INACTIVE)) }}">Pending <span class="badge rounded-pill bg-soft-danger text-danger float-end">{{ $count_new }}</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link @if($is_approved==Utility::ITEM_ACTIVE) active @endif" @if($is_approved==Utility::ITEM_ACTIVE)aria-current="page"@endif href="{{ route('admin.products.index','status='.encrypt(Utility::ITEM_ACTIVE)) }}">Approved</a>
-        </li>
-      </ul>
-    </div>
-</div>
+@if(session()->has('success')) <p class="text-success">{{ session()->get('success') }} @endif</p>
 <div class="row">
     <div class="col-lg-12">
         <div class="card mb-0">
@@ -35,7 +20,7 @@
                  <div class="row align-items-center">
                      <div class="col-md-6">
                          <div class="mb-3">
-                             <h5 class="card-title">@lang('translation.Product_List') <span class="text-muted fw-normal ms-2">({{ $products->count() }})</span></h5>
+                             <h5 class="card-title">@lang('translation.Product_Manage_List') <span class="text-muted fw-normal ms-2">({{ $products->count() }})</span></h5>
                          </div>
                      </div>
 
@@ -52,7 +37,7 @@
                                  </ul>
                              </div> --}}
                              <div>
-                                 <a href="{{ route('admin.products.create') }}" class="btn btn-light"><i class="bx bx-plus me-1"></i> Add New Product</a>
+                                 <a href="{{ route('admin.products.create') }}" class="btn btn-light"><i class="bx bx-plus me-1"></i> Add New</a>
                              </div>
 
                              {{-- <div class="dropdown">
@@ -61,9 +46,9 @@
                                  </a>
 
                                  <ul class="dropdown-menu dropdown-menu-end">
-                                     <li><a class="dropdown-item" href="#">Edit</a></li>
-                                     <li><a class="dropdown-item" href="#">Delete</a></li>
-                                     <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                     <li><a class="dropdown-item" href="#">Action</a></li>
+                                     <li><a class="dropdown-item" href="#">Another action</a></li>
+                                     <li><a class="dropdown-item" href="#">Something else here</a></li>
                                  </ul>
                              </div> --}}
                          </div>
@@ -83,76 +68,61 @@
                                  </div>
                              </th>
                              <th scope="col">Name</th>
-                             <th scope="col">Category</th>
-                             <th scope="col">Price</th>
-                             <th scope="col">Created By</th>
+                             <th scope="col">Ware House</th>
+                             <th scope="col">Sub Category</th>
+                             <th scope="col">Availability</th>
                              <th style="width: 80px; min-width: 80px;">Action</th>
                          </tr>
                          </thead>
                          <tbody>
-                            @foreach ($products as $product)
+                             @foreach ($products as $product)
+                             <tr>
+                                <th scope="row">
+                                    <div class="form-check font-size-16">
+                                        <input type="checkbox" class="form-check-input" id="contacusercheck1">
+                                        <label class="form-check-label" for="contacusercheck1"></label>
+                                    </div>
+                                </th>
+                                <td>
+                                   @if(!empty($product->image))
+                                   <img src="{{ URL::asset('storage/products/' . $product->image) }}" alt="" class="avatar-sm rounded-circle me-2">
+                               @else
+                               <div class="avatar-sm d-inline-block align-middle me-2">
+                                   <div class="avatar-title bg-soft-primary text-primary font-size-20 m-0 rounded-circle">
+                                       <i class="bx bxs-user-circle"></i>
+                                   </div>
+                               </div>
+                               @endif
+                                    <a href="#" class="text-body">{{ $product->name }}</a>
+                                </td>
+                                <td>{{ $product->branch->name }}<br><small>customer:{{ $product->branch->customer->name }}</small></td>
+                                <td>{{ $product->sub_category->name }}</td>
+                                <td>{{ $product->is_available? 'Yes' : 'No' }}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link font-size-16 shadow-none py-0 text-muted dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-horizontal-rounded"></i>
+                                        </button>
 
-                                <tr>
-                                    <th scope="row">
-                                        <div class="form-check font-size-16">
-                                            <input type="checkbox" class="form-check-input" id="contacusercheck1">
-                                            <label class="form-check-label" for="contacusercheck1"></label>
-                                        </div>
-                                    </th>
-                                    <td>
-                                        @if(!empty($product->image))
-                                            <img src="{{ URL::asset(App\Models\Product::DIR_STORAGE . $product->image) }}" alt="" class="avatar-sm rounded-circle me-2">
-                                        @else
-                                        <div class="avatar-sm d-inline-block align-middle me-2">
-                                            <div class="avatar-title bg-soft-primary text-primary font-size-20 m-0 rounded-circle">
-                                                <i class="bx bxs-user-circle"></i>
-                                            </div>
-                                        </div>
-                                        @endif
-
-                                        <a href="{{ route('admin.products.edit',encrypt($product->id)) }}" class="">{{ $product->name }}
-                                        @unless (empty($product->code))
-                                            {{ ' - '.$product->code }}
-                                        @endunless </a>
-                                        @unless (empty($product->description))
-                                           <p style="padding-left: 43px;"><small>{{ \Illuminate\Support\Str::limit($product->description, $limit = 60   , $end = '...') }}</small></p>
-                                        @endunless
-                                    </td>
-                                    <td><a target="_blank" href="{{ route('admin.categories.edit',encrypt($product->category->id))}}" class="">{{ $product->category->name }} </a></td>
-                                    <td>{{ Utility::CURRENCY_DISPLAY . ' '. $product->total_price }}</td>
-                                    <td>
-
-                                    </td>
-
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-link font-size-16 shadow-none py-0 text-muted dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bx bx-dots-horizontal-rounded"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="{{ route('admin.products.edit',encrypt($product->id))}}"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>
-                                                {{-- <li><a class="dropdown-item" href="{{ route('admin.products.destroy',encrypt($product->id))}}"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li> --}}
-                                                @if(!$product->is_approved)
-                                                <li><a href="#" class="dropdown-item" data-plugin="delete-data" data-target-form="#form_delete_{{ $loop->iteration }}"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>
-                                                <form id="form_delete_{{ $loop->iteration }}" method="POST" action="{{ route('admin.products.destroy',encrypt($product->id))}}">
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a href="{{ route('admin.products.edit',encrypt($product->id)) }}" class="dropdown-item"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>
+                                            {{-- <li><a href="{{ route('admin.products.destroy',encrypt($product->id))}}" class="dropdown-item"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li> --}}
+                                            <li><a href="#" class="dropdown-item" data-plugin="delete-data" data-target-form="#form_delete_{{ $loop->iteration }}"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>
+                                                <form id="form_delete_{{ $loop->iteration }}" method="POST" action="{{ route('admin.products.destroy',encrypt($product->id)) }}">
                                                     @csrf
                                                     <input type="hidden" name="_method" value="DELETE" />
                                                 </form>
-                                                @endif
-
-                                                @if($product->is_approved)
-                                                    <li><a class="dropdown-item" href="{{ route('admin.products.changeStatus',encrypt($product->id))}}">{!! $product->status?'<i class="fas fa-power-off font-size-16 text-danger me-1"></i> Unpublish':'<i class="fas fa-circle-notch font-size-16 text-primary me-1"></i> Publish'!!}</a></li>
-                                                @endif
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
+                                            <li><a class="dropdown-item" href="{{ route('admin.products.changeStatus',encrypt($product->id)) }}"><i class="mdi mdi-cursor-pointer font-size-16 text-success me-1"></i> {{ $product->status?'Deactivate':'Activate'}}</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
                              @endforeach
 
                          </tbody>
                      </table>
                      <!-- end table -->
-                     <div class="pagination justify-content-center">{{ $products->appends(['status' => encrypt($is_approved)])->links() }}</div>
+                     <div class="pagination justify-content-center">{{ $products->links() }}</div>
                  </div>
                  <!-- end table responsive -->
             </div>

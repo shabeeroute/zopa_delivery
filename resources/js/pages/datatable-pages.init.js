@@ -1,8 +1,8 @@
 /*
-Template Name: ZOPA - Admin & Dashboard Template
-Author: Web Mahal Web Service
-Website: https://webmahal.com/
-Contact: webmahal@gmail.com
+Template Name: Dason - Admin & Dashboard Template
+Author: Themesdesign
+Website: https://themesdesign.in/
+Contact: themesdesign.in@gmail.com
 File: datatable for pages Js File
 */
 

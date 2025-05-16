@@ -8,11 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Bank extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','status'] ;
-
-    public function customers()
-    {
-        return $this->hasMany(Customer::class);
-    }
-
+    protected $guarded = [];
 }

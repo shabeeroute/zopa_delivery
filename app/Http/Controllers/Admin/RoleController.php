@@ -19,7 +19,7 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $roles = Role::orderBy('id','desc')->paginate(Utility::PAGINATE_COUNT);
+        $roles = Role::orderBy('id')->paginate(Utility::PAGINATE_COUNT);
         return view('admin.roles.index',compact('roles'));
     }
 
@@ -30,7 +30,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::orderBy('id','asc')->get();
+        $permissions = Permission::all();
         return view('admin.roles.add',compact('permissions'));
     }
 
@@ -82,7 +82,7 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $permissions = Permission::orderBy('id','asc')->get();
+        $permissions = Permission::all();
         $role = Role::findOrFail(decrypt($id));
         return view('admin.roles.add',compact('role','permissions'));
     }

@@ -20,7 +20,7 @@
                 </div>
                 <div class="card-body">
                     <small class="text-muted d-block mt-1 mb-3">
-                        If you have meal balance? Your Daily Meal gets auto-delivered — no need to set a reminder or do anything.<br>
+                        If you have meal balance, Daily Meal gets auto-delivered — no need to set a reminder or do anything.<br>
                         Just mark leave if you want to skip a day. Sundays are off!
                     </small>
                     <div class="row d-flex align-items-center" style="width: 100%;">

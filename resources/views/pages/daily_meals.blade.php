@@ -52,7 +52,7 @@
                     @if($mealsLeft>0)
                         <p class="text-success">Your meal is on process will be updated here shortly.</p>
                     @else
-                        <p class="text-warning">Your Meal Wallet is empty. <a href="{{ route('front.meal.plan') }}">Buy a Meal Plan</a></p>
+                        <p class="text-danger">Your Meal Wallet is empty. <a href="{{ route('front.meal.plan') }}">Buy a Meal Plan</a></p>
                     @endif
                 @endif
             </div>

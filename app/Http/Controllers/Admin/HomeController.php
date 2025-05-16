@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -82,23 +81,5 @@ class HomeController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    public function distric_list(Request $request)
-    {
-        $districts = DB::table('districts')
-            ->where('state_id', $request->s_id)
-            ->orderBy('name', 'asc')
-            ->select('id', 'name')
-            ->get();
-
-        $data[] = '<option value="">Select District</option>';
-
-        foreach ($districts as $district) {
-            $selected = $district->id == $request->d_id ? 'selected' : '';
-            $data[] = '<option value="' . $district->id . '"' . $selected . '>' . $district->name . '</option>';
-        }
-
-        return $data;
     }
 }

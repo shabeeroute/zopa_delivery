@@ -4,82 +4,82 @@ namespace App\Http\Utilities;
 
 use App\Models\Settings;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class Utility{
 
     //Constants
 
-    const SUPER_ADMIN_ID = 1;
-    const ROLE_ADMIN = 1;
-    const DEFAULT_BRANCH_ID = 2;
+    const ADMIN_ID = 1;
+    const PRODUCT_TYPE_RENT = 1;
+    const PRODUCT_TYPE_NORMAL = 0;
+
+    const LENDER_TYPE_CUSTOMER = 1;
+    const LENDER_TYPE_BRANCH = 0;
 
     const FROM_MAIL = 'shabeer@gmail.com';
-    const SUPPORT_MAIL = 'support@zopa.in';
 
-    const COUNTRY_CODE = '+91';
-    const COUNTRY = 'IN';
-    const CURRENCY_DISPLAY = 'INR';
-    const CURRENCY_WORD_DISPLAY = 'Rupees';
-    const STATE_ID_KERALA = 12;
-    const DISTRICT_ID_MPM = 230;
-    const KITCHEN_KDY = 1;
-    const SINGLE_MEAL_ID = 1;
-    const CUTOFF_TIME = "17:30";
-    const MAX_LEAVE_DAYS_AHEAD = 30;
-    const MAX_MONTHLY_LEAVES = 5;
-    const MAX_ACTIVE_LEAVES = 5;
-    const WALLET_LOW_BALANCE = 5;
+    const COUNTRY_CODE = '+971';
+    const COUNTRY = 'KSA';
+    const CURRENCY_DISPLAY = 'SAR';
+    const CURRENCY_WORD_DISPLAY = 'Riyal';
 
-
-    const PAGINATE_COUNT = 15;
-    const LOAD_MORE_COUNT = 5;
+    const PAGINATE_COUNT = 2;
 
     const PAYMENT_ONLINE = 1;
     const PAYMENT_COD = 2;
-    const PAYMENT_BNK = 3;
-
-    const PAYMENT_CASH = 1;
-    const PAYMENT_BANK = 2;
-    const PAYMENT_UPI = 3;
-
-    const PAYMENT_PENDING = 0;
-    const PAYMENT_COMPLETED = 1;
-    const PAYMENT_FAILED = 2;
-    const PAYMENT_REFUNDED = 3;
 
     const ITEM_ACTIVE = 1;
     const ITEM_INACTIVE = 0;
 
+    const ITEM_VERIFIED = 1;
+    const ITEM_UNVERIFIED = 0;
+
+    const TICKET_CUSTOMER_POSTED = 1;
+    const TICKET_ADMIN_REPLIED = 2;
+
     const STATUS_NEW = 0;
-    const STATUS_CONFIRMED = 1;
-    const STATUS_PRINTING = 2;
-    const STATUS_PRODUCTION = 3;
-    const STATUS_OUT = 4;
-    const STATUS_DELIVEREDP = 5;
-    const STATUS_DELIVERED = 6;
-    const STATUS_CLOSED = 7;
-    const STATUS_ONHOLD = 8;
-    const STATUS_CANCELLED = 9;
-    const STATUS_NOTPAID = 15;
+    const STATUS_ACCEPTED = 1;
+    const STATUS_REJECT = 2;
+    const STATUS_READY = 3;
+    const STATUS_DESPATCHED = 4;
+    const STATUS_OUT = 5;
+    const STATUS_OUT_PICKUP = 6;
+    const STATUS_DELIVERED = 7;
+    const STATUS_PICKED = 8;
+    const STATUS_CLOSED = 9;
+    const STATUS_ONHOLD = 10;
+    const STATUS_CANCELLED = 11;
+    const STATUS_RETURN_WAREHOUSE = 11;
 
-    // Method to get CUTOFF HOUR and CUTOFF MINUTE from CUTOFF_TIME
-    public static function getCutoffHourAndMinute() {
-        list($hour, $minute) = explode(':', self::CUTOFF_TIME);
+    const STATUS_PARTIALLY = 2;
 
-        // Cast to integers (optional, as `explode` returns strings)
-        $hour = (int) $hour;
-        $minute = (int) $minute;
+    const STATUS_SUBMITTED = 0;
+    const STATUS_REVIEWAL = 1;
+    const STATUS_MODIFY = 2;
+    const STATUS_APPROVE = 3;
 
-        return [
-            'hour' => $hour,
-            'minute' => $minute
-        ];
-    }
+    const MESSAGE_TYPE_ALL = 0;
+    const MESSAGE_TYPE_BRANCH = 1;
+    const MESSAGE_TYPE_CUSTOMER = 2;
+    const MESSAGE_TYPE_DRIVER = 3;
 
-    public static function generateFileName($name, $extension): string {
-        return self::cleanString($name) . now()->format('YmdHis') . '.' . $extension;
-    }
+    const NOTIFICATION_TYPE_ALL = 0;
+    const NOTIFICATION_TYPE_BRANCH = 1;
+    const NOTIFICATION_TYPE_CUSTOMER = 2;
+    const NOTIFICATION_TYPE_DRIVER = 3;
+
+    const TICKET_TYPE_TECHNICAL = 1;
+    const TICKET_TYPE_SALES = 2;
+    const TICKET_TYPE_COMPLAINTS = 3;
+
+    const TICKET_ESC_AGENT = 1;
+    const TICKET_ESC_MANAGEMENT = 2;
+    const TICKET_ESC_EXECUTIVE = 3;
+
+    const SELLER_TYPE_CUSTOMER = 'Customer';
+    const SELLER_TYPE_WAREHOUSE = 'Warehouse';
+
+    const MAX_REVIEW_LIMIT = 5;
 
     public static function otp()
     {
@@ -88,54 +88,204 @@ class Utility{
         return $otp;
     }
 
+    protected  static $status = [
+        self::TICKET_CUSTOMER_POSTED => 'Active',
+        self::ITEM_INACTIVE => 'Inactive',
+    ];
+    public static function status()
+    {
+        return static::$status;
+    }
+
     protected  static $saleStatus = [
-        self::STATUS_NEW => ['name'=>'New', 'exe'=>'0'],
-        self::STATUS_CONFIRMED => ['name'=>'Party Approved', 'exe'=>'0'],
-        self::STATUS_PRINTING => ['name'=>'Printing', 'exe'=>'0'],
-        self::STATUS_PRODUCTION => ['name'=>'On Production', 'exe'=>'0'],
-        self::STATUS_OUT => ['name'=>'Out for Delivery', 'exe'=>'1'],
-        self::STATUS_DELIVEREDP => ['name'=>'Delivered Partially', 'exe'=>'1'],
-        self::STATUS_DELIVERED => ['name'=>'Delivered', 'exe'=>'1'],
-        self::STATUS_CLOSED => ['name'=>'Closed', 'exe'=>'0'],
-        self::STATUS_ONHOLD => ['name'=>'On Hold', 'exe'=>'0'],
-        self::STATUS_CANCELLED => ['name'=>'Cancelled', 'exe'=>'0'],
+        self::STATUS_NEW => ['name'=>'New', 'date_field'=>'created_at'],
+        self::STATUS_ACCEPTED => ['name'=>'Accepted', 'date_field'=>'date_accepted'],
+        self::STATUS_READY => ['name'=>'Ready to Ship', 'date_field'=>'date_ready'],
+        self::STATUS_DESPATCHED => ['name'=>'Despatched', 'date_field'=>'date_despatched'],
+        self::STATUS_OUT => ['name'=>'Out for Delivery', 'date_field'=>'date_out_delivery'],
+        self::STATUS_DELIVERED => ['name'=>'Delivered', 'date_field'=>'date_delivered'],
+        self::STATUS_CLOSED => ['name'=>'Closed', 'date_field'=>'date_closed'],
+        self::STATUS_ONHOLD => ['name'=>'On Hold', 'date_field'=>'date_onhold'],
+        self::STATUS_CANCELLED => ['name'=>'Cancelled', 'date_field'=>'date_cancelled'],
     ];
     public static function saleStatus()
     {
         return static::$saleStatus;
     }
 
-    protected  static $paymentStatus = [
-        self::PAYMENT_COMPLETED => ['name'=>'Completed'],
-        self::PAYMENT_PENDING => ['name'=>'Pending'],
-
-        self::PAYMENT_FAILED => ['name'=>'Failed'],
-        self::PAYMENT_REFUNDED => ['name'=>'Refunded'],
+    protected  static $returnStatus = [
+        self::STATUS_NEW => ['name'=>'New', 'date_field'=>'created_at'],
+        self::STATUS_ACCEPTED => ['name'=>'Accepted', 'date_field'=>'date_accepted'],
+        // self::STATUS_READY => ['name'=>'out for pick up', 'date_field'=>''],
+        self::STATUS_OUT => ['name'=>'Out for Pickup', 'date_field'=>'date_out_pickup'],
+        self::STATUS_PICKED => ['name'=>'Picked up', 'date_field'=>'date_picked'],
+        self::STATUS_CLOSED => ['name'=>'Return to warehouse', 'date_field'=>'date_closed'],
+        self::STATUS_ONHOLD => ['name'=>'On Hold', 'date_field'=>'date_onhold'],
+        self::STATUS_CANCELLED => ['name'=>'Cancelled', 'date_field'=>'date_cancelled'],
     ];
-    public static function paymentStatus()
+    public static function returnStatus()
     {
-        return static::$paymentStatus;
+        return static::$saleStatus;
     }
 
-    protected  static $paymentMethods = [
-        self::PAYMENT_CASH => ['name'=>'Cash'],
-        self::PAYMENT_BANK => ['name'=>'Bank Transfer'],
-        self::PAYMENT_UPI => ['name'=>'UPI'],
-
+    protected  static $deliveryStatus = [
+        self::STATUS_NEW => ['name'=>'New'],
+        self::STATUS_ACCEPTED => ['name'=>'Accepted'],
+        self::STATUS_REJECT => ['name'=>'Reject'],
+        self::STATUS_PICKED => ['name'=>'Picked'],
+        self::STATUS_OUT => ['name'=>'Out for Delivery'],
+        self::STATUS_OUT_PICKUP => ['name'=>'Out for Pickup'],
+        self::STATUS_PICKED => ['name'=>'Picked up'],
+        self::STATUS_DELIVERED => ['name'=>'Delivered'],
+        self::STATUS_RETURN_WAREHOUSE => ['name'=>'Return to Warehouse'],
     ];
-    public static function paymentMethods()
+    public static function deliveryStatus()
     {
-        return static::$paymentMethods;
+        return static::$deliveryStatus;
     }
 
-    protected  static $handleTypes = [
-        1 => 'Paper Handle',
-        2 => 'Rope Handle'
-
+    protected  static $sellerStatus = [
+        self::STATUS_SUBMITTED => ['name'=>'Submitted'],
+        self::STATUS_REVIEWAL => ['name'=>'Under Reviewal'],
+        self::STATUS_MODIFY => ['name'=>'Request for Modification'],
+        self::STATUS_APPROVE => ['name'=>'Approved'],
     ];
-    public static function handleTypes()
+
+    public static function sellerStatus()
     {
-        return static::$handleTypes;
+        return static::$sellerStatus;
+    }
+
+    protected  static $saleBatchStatus = [
+        self::STATUS_NEW => ['name'=>'New'],
+        self::STATUS_ACCEPTED => ['name'=>'Accepted'],
+        self::STATUS_PARTIALLY => ['name'=>'Partially Accepted'],
+    ];
+
+    public static function saleBatchStatus()
+    {
+        return static::$saleBatchStatus;
+    }
+
+    protected  static $product_units = [
+        '1' => ['en'=>'Nos', 'ar'=>'Nos'],
+        '2' => ['en'=>'Packet', 'ar'=>'Packet'],
+        '3' => ['en'=>'Box', 'ar'=>'Box'],
+        '4' => ['en'=>'Case', 'ar'=>'Case'],
+    ];
+    public static function product_units()
+    {
+        return static::$product_units;
+    }
+
+    protected  static $rent_term_types = [
+        '1' => ['en'=>'Hour', 'ar'=>'Hour'],
+        '2' => ['en'=>'Day', 'ar'=>'Day'],
+        '3' => ['en'=>'Month', 'ar'=>'Month'],
+        '4' => ['en'=>'Year', 'ar'=>'Year'],
+    ];
+    public static function rent_term_types()
+    {
+        return static::$rent_term_types;
+    }
+
+    protected  static $product_sizes = [
+        '1' => ['en'=>'Small', 'ar'=>'Small'],
+        '2' => ['en'=>'Medium', 'ar'=>'Medium'],
+        '3' => ['en'=>'Large', 'ar'=>'Large'],
+        '4' => ['en'=>'XL', 'ar'=>'XL'],
+    ];
+    public static function product_sizes()
+    {
+        return static::$product_sizes;
+    }
+
+    protected  static $product_colors = [
+        '1' => ['en'=>'White', 'ar'=>'White'],
+        '2' => ['en'=>'Blue', 'ar'=>'Blue'],
+        '3' => ['en'=>'Red', 'ar'=>'Red'],
+        '4' => ['en'=>'Black', 'ar'=>'Black'],
+    ];
+    public static function product_colors()
+    {
+        return static::$product_colors;
+    }
+
+    protected  static $message_recipients = [
+        self::MESSAGE_TYPE_ALL => "All",
+        self::MESSAGE_TYPE_BRANCH => "Warehouse",
+        self::MESSAGE_TYPE_CUSTOMER => "Customer",
+        self::MESSAGE_TYPE_DRIVER => "Driver",
+    ];
+    public static function message_recipients()
+    {
+        return static::$message_recipients;
+    }
+
+    protected  static $notification_recipients = [
+        self::NOTIFICATION_TYPE_ALL => "All",
+        self::NOTIFICATION_TYPE_BRANCH => "Warehouse",
+        self::NOTIFICATION_TYPE_CUSTOMER => "Customer",
+        self::NOTIFICATION_TYPE_DRIVER => "Driver",
+    ];
+    public static function notification_recipients()
+    {
+        return static::$notification_recipients;
+    }
+
+    protected  static $offer_types = [
+        '1' => "Percentage",
+        '2' => "Amount",
+    ];
+    public static function offer_types()
+    {
+        return static::$offer_types;
+    }
+
+    protected  static $product_types = [
+        '1' => "Single",
+        '2' => "Bundle",
+    ];
+    public static function product_types()
+    {
+        return static::$product_types;
+    }
+
+    protected  static $user_permissions = [
+        '1' => "User Managment",
+        '2' => "Vendor Managment",
+        '3' => "Customer Management",
+        '4' => "Shipping Management",
+        '5' => "Category Management",
+        '6' => "Brand Management",
+        '7' => "Product Management",
+        '8' => "Branch Management",
+        '9' => "Orders Management",
+        '10' => "Offer Management",
+    ];
+    public static function user_permissions()
+    {
+        return static::$user_permissions;
+    }
+
+    protected  static $ticket_types = [
+        self::TICKET_TYPE_TECHNICAL => 'Technical',
+        self::TICKET_TYPE_SALES => 'Sales',
+        self::TICKET_TYPE_COMPLAINTS => 'Complaints',
+    ];
+    public static function ticket_types()
+    {
+        return static::$ticket_types;
+    }
+
+    protected  static $ticket_escalations = [
+        self::TICKET_ESC_AGENT => 'Agent',
+        self::TICKET_ESC_MANAGEMENT => 'Management',
+        self::TICKET_ESC_EXECUTIVE => 'Executive',
+    ];
+    public static function ticket_escalations()
+    {
+        return static::$ticket_escalations;
     }
 
     public static function settings($term) {
@@ -150,15 +300,8 @@ class Utility{
 
     public static function cleanString($string) {
         $string = str_replace(' ','_', $string); // Replaces all spaces with underscore.
-        $string = str_replace('-_','_', $string);
-        $string = str_replace('_-','_', $string);
-        $string = str_replace('-','_', $string);
-        $string = str_replace('--','_', $string);
-        $string = str_replace('__','_', $string);
 
-        $string = preg_replace('/[^A-Za-z.0-9\-_]/', '', $string); // Removes special chars.
-
-        return Str::limit($string, $limit = 25, $end = '...');
+        return preg_replace('/[^A-Za-z.0-9\-]/', '', $string); // Removes special chars.
     }
 
     public static function currencyToWords(float $number)
@@ -192,9 +335,8 @@ class Utility{
         }
         $Rupees = implode('', array_reverse($str));
         $paise_pre = !empty($Rupees) ? ' and ' : '';
-        $paise = ($decimal) ? $paise_pre . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' paise ' : '';
-        $rupees_word = !empty($paise)?'':self::CURRENCY_WORD_DISPLAY;
-        return ($Rupees ? $Rupees : '') . $paise . $rupees_word . ' only' ;
+        $paise = ($decimal) ? $paise_pre . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Fils' : '';
+        return ($Rupees ? $Rupees : '') . $paise . self::CURRENCY_WORD_DISPLAY . ' only' ;
     }
 
     public static function formatPrice($val,$r=2)
@@ -205,61 +347,15 @@ class Utility{
         return  $sign.$i;
     }
 
-    // public static function stockInBranch($branch,$product)
-    // {
-    //     $branch_product = DB::table('branch_product')->where(['branch_id'=>$branch, 'product_id'=>$product])->first();
-    //     return $branch_product->stock;
-    // }
-
-    public static function numToWords($number)
+    public static function stockInBranch($branch,$product)
     {
-        $words = array(
-            '0' => 'Zero', '1' => 'One', '2' => 'Two',
-            '3' => 'Three', '4' => 'Four', '5' => 'Five',
-            '6' => 'Six', '7' => 'Seven', '8' => 'Eight',
-            '9' => 'Nine', '10' => 'Ten', '11' => 'Eleven',
-            '12' => 'Twelve', '13' => 'Thirteen', '14' => 'Fourteen',
-            '15' => 'Fifteen', '16' => 'Sixteen', '17' => 'Seventeen',
-            '18' => 'Eighteen', '19' => 'Nineteen', '20' => 'Twenty',
-            '30' => 'Thirty', '40' => 'Forty', '50' => 'Fifty', '60' => 'Sixty',
-            '70' => 'Seventy', '80' => 'Eighty', '90' => 'Ninety'
-        );
+        $branch_product = DB::table('branch_product')->where(['branch_id'=>$branch, 'product_id'=>$product])->first();
+        return $branch_product->stock;
+    }
 
-        if ($number <= 20) {
-            return $words[$number];
-        }
-        elseif ($number < 100) {
-            return $words[10 * floor($number / 10)]
-                . ($number % 10 > 0 ? ' ' . $words[$number % 10] : '');
-        }
-        else {
-            $output = '';
-            if ($number >= 1000000000) {
-                $output .= static::numToWords(floor($number / 1000000000))
-                    . ' Billion ';
-                $number %= 1000000000;
-            }
-            if ($number >= 1000000) {
-                $output .= static::numToWords(floor($number / 1000000))
-                    . ' Million ';
-                $number %= 1000000;
-            }
-            if ($number >= 1000) {
-                $output .= static::numToWords(floor($number / 1000))
-                    . ' Thousand ';
-                $number %= 1000;
-            }
-            if ($number >= 100) {
-                $output .= static::numToWords(floor($number / 100))
-                    . ' Hundred ';
-                $number %= 100;
-            }
-            if ($number > 0) {
-                $output .= ($number <= 20) ? $words[$number] :
-                $words[10 * floor($number / 10)] . ' '
-                    . ($number % 10 > 0 ? $words[$number % 10] : '');
-            }
-            return trim($output);
-        }
+    public static function rentTermNameById($id)
+    {
+        $data = DB::table('rent_terms')->where(['id'=>$id])->first();
+        return $data->name;
     }
 }

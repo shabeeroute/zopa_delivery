@@ -2,116 +2,74 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
-
-    use Notifiable;
-
-    protected $guard = 'customer';
+    use HasApiTokens, HasFactory, Notifiable;
 
     const DIR_STORAGE = 'storage/customers/';
-    const DIR_PUBLIC = 'customers';
+    const DIR_PUBLIC = 'customers/';
 
     protected $hidden = [
+        'password',
         'id',
-        'user_id',
-        'password',
-        'remember_token',
     ];
 
-    protected $casts = [
-        'status' => 'boolean',
-        'is_approved' => 'boolean',
-    ];
+    protected $guarded = [];
+    // protected $cast = ['is_verify'=>'boolean', 'is_seller'=>'boolean'];
 
-    protected $fillable = [
-        'name',
-        'phone',
-        'password',
-        'office_name',
-        'designation',
-        'city',
-        'landmark',
-        'designation',
-        'district_id',
-        'state_id',
-        'postal_code',
-        'image_filename',
-        'whatsapp',
-        'kitchen_id',
-        'status',
-        'is_approved',
-        'user_id',
-    ];
+    // public function reviews() {
+    //     return $this->hasMany(CustomerReview::class, 'customer_id', 'id');
+    // }
 
-    // If passwords are hashed
-    public function setPasswordAttribute($value)
+    public function customer_address() {
+        return $this->hasMany(CustomerAddress::class, 'customer_id', 'id');
+    }
+
+    public function getNameAttribute() {
+        return $this->first_name. ' ' . $this->last_name;
+    }
+
+    // public function sreviews()
+    // {
+    //     return $this->morphMany(SupplierReview::class, 'sreviewable');
+    // }
+
+    // public function creviews()
+    // {
+    //     return $this->morphMany(CustomerReview::class, 'creviewable');
+    // }
+
+    public function reviews() {
+        return $this->hasMany(CustomerReview::class);
+    }
+
+    public function getMyReviewAttribute() {
+        $total_reviews = $this->reviews()->sum('rating');
+        $review_count = $this->reviews()->count();
+        $my_review = $review_count==0? 0 : $total_reviews/$review_count;
+        return floor($my_review);
+    }
+
+    public function sellers() {
+        return $this->hasMany(Seller::class);
+    }
+
+    public function adresses() {
+        return $this->hasMany(CustomerAddress::class);
+    }
+
+    public function adresse_default() {
+        return $this->hasOne(CustomerAddress::class)->where('default',1);
+    }
+
+    public function bank()
     {
-        $this->attributes['password'] = bcrypt($value);
+        return $this->belongsTo(Bank::class, 'bank_id');
     }
-
-    public function kitchen()
-    {
-        return $this->belongsTo(Kitchen::class);
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class);
-    }
-
-    public function state()
-    {
-        return $this->belongsTo(State::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function meals()
-    {
-        return $this->belongsToMany(Meal::class, 'customer_meal')
-                    ->withPivot('price', 'quantity', 'pay_method', 'is_paid', 'status')
-                    ->withTimestamps();
-    }
-
-    public function mealWallet()
-    {
-        return $this->hasOne(MealWallet::class);
-    }
-
-    public function dailyMeals()
-    {
-        return $this->hasMany(DailyMeal::class);
-    }
-
-    public function addons()
-    {
-        return $this->belongsToMany(Addon::class, 'customer_addon')
-                    ->withPivot('price', 'quantity', 'pay_method', 'is_paid', 'status')
-                    ->withTimestamps();
-    }
-
-    public function addonWallets()
-    {
-        return $this->hasMany(AddonWallet::class, 'customer_id', 'id');
-    }
-
-    public function mealLeaves()
-    {
-        return $this->hasMany(MealLeave::class);
-    }
-
-    public function deleteImage(){
-        if ($this->image_filename && Storage::exists(self::DIR_PUBLIC . '/' . $this->image_filename)) {
-            Storage::delete(self::DIR_PUBLIC . '/' . $this->image_filename);
-        }
-    }
-
 }

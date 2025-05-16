@@ -1,14 +1,14 @@
-@extends('admin.layouts.master')
-@section('title')  @if(isset($category)) @lang('translation.Edit_Category') @else @lang('translation.Add_Category') @endif @endsection
+@extends('layouts.master')
+@section('title') @lang('translation.Add_Category') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/select2/select2.min.css') }}" rel="stylesheet">
 <link href="{{ URL::asset('assets/libs/dropzone/dropzone.min.css') }}" rel="stylesheet">
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
+@component('components.breadcrumb')
 @slot('li_1') @lang('translation.Catalogue_Manage') @endslot
 @slot('li_2') @lang('translation.Category_Manage') @endslot
-@slot('title') @if(isset($category)) @lang('translation.Edit_Category') @else @lang('translation.Add_Category') @endif @endslot
+@slot('title') @lang('translation.Add_Category') @endslot
 @endcomponent
 <div class="row">
     <form method="POST" action="{{ isset($category)? route('admin.categories.update') : route('admin.categories.store')  }}" enctype="multipart/form-data">
@@ -21,21 +21,36 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Category Details</h4>
-                    <p class="card-title-desc">{{ isset($category)? 'Edit' : "Enter" }} the Details of your Category</p>
+                    <h4 class="card-title">Basic Information</h4>
+                    <p class="card-title-desc">Fill all information below</p>
                 </div>
                 <div class="card-body">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="name">Name</label>
+                                    <label for="name">Category Name</label>
                                     <input id="name" name="name" type="text" class="form-control"  placeholder="Category Name" value="{{ isset($category)?$category->name:old('name')}}">
-                                    @error('name') <p class="text-danger">{{ $message }}</p> @enderror
+                                    @error('name') <p>{{ $message }}</p> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="name_ar">Category Name Arabic</label>
+                                    <input id="name_ar" name="name_ar" type="text" class="form-control"  placeholder="Category Name Arabic" value="{{ isset($category)?$category->name_ar:old('name_ar')}}">
+                                    @error('name_ar') <p>{{ $message }}</p> @enderror
                                 </div>
                             </div>
+
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="control-label">Image</label>
+                                    <label class="control-label">Rental Type</label>
+                                    <select id="rental_type_id" name="rental_type_id" class="form-control select2">
+                                        <option value="">Select</option>
+                                        @foreach ($rental_types as $rental_type )
+                                            <option value="{{ $rental_type->id }}" {{ isset($category)&&($category->rental_type_id==$rental_type->id)?'selected':''}}>{{ $rental_type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="control-label">Category Image</label>
                                     <span id="imageContainer" @if(isset($category)&&empty($category->image)) style="display: none" @endif>
                                         @if(isset($category)&&!empty($category->image))
                                             <img src="{{ URL::asset(App\Models\Category::DIR_STORAGE . $category->image) }}" alt="" class="avatar-xxl rounded-circle me-2">
@@ -49,15 +64,13 @@
                                             <button type="button" class="btn-close" aria-label="Close"></button>
                                         @endif
                                     </span>
-                                    <input name="isImageDelete" type="hidden" value="0">
                                 </div>
                             </div>
-
                         </div>
                 </div>
             </div>
 
-            {{-- <div class="card">
+            <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Meta Data</h4>
                     <p class="card-title-desc">Fill all information below</p>
@@ -83,18 +96,18 @@
                         </div>
                     </div>
                 </div>
-            </div> --}}
+            </div>
 
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="submit" class="btn btn-primary waves-effect waves-light">{{ isset($category) ? 'Update' : 'Save' }}</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">{{ isset($category) ? 'Update' : 'Add New' }}</button>
                         <button type="reset" class="btn btn-secondary waves-effect waves-light">Cancel</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        <input name="isImageDelete" type="hidden" value="0">
     </form>
 </div>
 <!-- end row -->

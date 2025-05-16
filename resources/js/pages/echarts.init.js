@@ -1,8 +1,8 @@
 /*
-Template Name: ZOPA - Food Drop
-Author: Web Mahal Web Service
-Website: https://webmahal.com/
-Contact: webmahal@gmail.com
+Template Name: Dason - Admin & Dashboard Template
+Author: Themesdesign
+Website: https://themesdesign.in/
+Contact: themesdesign.in@gmail.com
 File: Echarts Init Js File
 */
 
@@ -543,7 +543,7 @@ option = {
             [33, 38, 33, 40],
             [40, 40, 32, 42]
         ],
-
+        
         itemStyle: {
             normal: {
                 color: candlestickColors[0],
@@ -567,7 +567,7 @@ var myChart = echarts.init(dom);
 var app = {};
 option = null;
 option = {
-
+    
     tooltip : {
         formatter: "{a} <br/>{b} : {c}%"
     },
@@ -582,9 +582,9 @@ option = {
             name: 'Business indicator',
             type: 'gauge',
             detail: {formatter:'{value}%'},
-            axisLine: {
-                lineStyle: {
-                    color: [[0.2, gaugeColors[0]],[0.8, gaugeColors[1]],[1, gaugeColors[2]]],
+            axisLine: {     
+                lineStyle: {       
+                    color: [[0.2, gaugeColors[0]],[0.8, gaugeColors[1]],[1, gaugeColors[2]]], 
                     width: 20
                 }
             },

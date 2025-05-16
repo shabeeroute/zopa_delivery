@@ -17,8 +17,11 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = 'customer.daily_meals';
-    public const ADMIN_HOME = '/admin/dashboard';
+    public const HOME = '/admin/dashboard';
+    public const SELLER_HOME = '/seller/dashboard';
+    public const CUSTOMER_HOME = '/customer/dashboard';
+    public const BRANCH_HOME = '/branch/dashboard';
+    public const DRIVER_HOME = '/driver/dashboard';
 
     /**
      * The controller namespace for the application.
@@ -27,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string|null
      */
-    // protected $namespace = 'App\\Http\\Controllers';
+     protected $namespace = 'App\\Http\\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.

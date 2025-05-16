@@ -1,21 +1,16 @@
-@extends('admin.layouts.master')
-@section('title') @lang('translation.UserList') @endsection
+@extends('layouts.master')
+@section('title') @lang('translation.Users') @endsection
 @section('css')
 <link href="{{ URL::asset('/assets/libs/datatables.net-bs4/datatables.net-bs4.min.css') }}" rel="stylesheet">
 <link href="{{ URL::asset('assets/libs/datatables.net-responsive-bs4/datatables.net-responsive-bs4.min.css') }}" rel="stylesheet" type="text/css" />
 
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
-@slot('li_1') @lang('translation.Account_Manage') @endslot
-@slot('li_2') @lang('translation.User_Management') @endslot
-@slot('title') @lang('translation.UserList') @endslot
+@component('components.breadcrumb')
+@slot('li_1') @lang('translation.User_Management') @endslot
+@slot('title') @lang('translation.Users') @endslot
 @endcomponent
-@if(session()->has('success'))
-<div class="alert alert-success alert-top-border alert-dismissible fade show" role="alert">
-    <i class="mdi mdi-check-all me-3 align-middle text-success"></i><strong>Success</strong> - {{ session()->get('success') }}
-</div>
-@endif
+@if(session()->has('success')) <p class="text-success">{{ session()->get('success') }} @endif</p>
 <div class="row">
     <div class="col-lg-12">
         <div class="card mb-0">
@@ -29,7 +24,16 @@
 
                      <div class="col-md-6">
                          <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
-
+                             {{-- <div>
+                                 <ul class="nav nav-pills">
+                                     <li class="nav-item">
+                                         <a class="nav-link active" href="apps-contacts-list" data-bs-toggle="tooltip" data-bs-placement="top" title="List"><i class="bx bx-list-ul"></i></a>
+                                     </li>
+                                     <li class="nav-item">
+                                         <a class="nav-link" href="apps-contacts-grid" data-bs-toggle="tooltip" data-bs-placement="top" title="Grid"><i class="bx bx-grid-alt"></i></a>
+                                     </li>
+                                 </ul>
+                             </div> --}}
                              <div>
                                  <a href="{{ route('admin.users.create') }}" class="btn btn-light"><i class="bx bx-plus me-1"></i> Add New</a>
                              </div>
@@ -62,8 +66,8 @@
                                  </div>
                              </th>
                              <th scope="col">Name</th>
+                             <th scope="col">Place</th>
                              <th scope="col">Email</th>
-                             <th scope="col">Phone</th>
                              <th style="width: 80px; min-width: 80px;">Action</th>
                          </tr>
                          </thead>
@@ -86,7 +90,7 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <a href="{{ route('admin.users.edit',encrypt($user->id)) }}" class="">{{ $user->name }} {{ $user->roles->count()>0? ' | ':''}}
+                                        <a href="#" class="text-body">{{ $user->name }} {{ $user->roles->count()>0? ' | ':''}}
                                         <small>
                                             @foreach ($user->roles as $role)
                                                 {{ $role->display_name }} {{ $loop->iteration!=1 ? ', ':'' }}
@@ -94,26 +98,25 @@
                                         </small>
                                         </a>
                                     </td>
+                                    <td>{{ $user->location }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->phone }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-link font-size-16 shadow-none py-0 text-muted dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bx bx-dots-horizontal-rounded"></i>
                                             </button>
-                                            @if(Auth::id()!=$user->id || $user->id!=Utility::SUPER_ADMIN_ID)
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a href="{{ route('admin.users.edit',encrypt($user->id))}}" class="dropdown-item"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>
-                                                    {{-- <li><a href="{{ route('admin.users.destroy',encrypt($user->id))}}" class="dropdown-item"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li> --}}
-
-                                                        <li><a href="#" class="dropdown-item" data-plugin="delete-data" data-target-form="#form_delete_{{ $loop->iteration }}"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>
-                                                    <form id="form_delete_{{ $loop->iteration }}" method="POST" action="{{ route('admin.users.destroy',encrypt($user->id))}}">
-                                                        @csrf
-                                                        <input type="hidden" name="_method" value="DELETE" />
-                                                    </form>
-                                                    <li><a class="dropdown-item" href="{{ route('admin.users.changeStatus',encrypt($user->id))}}">{!! $user->status?'<i class="fas fa-power-off font-size-16 text-danger me-1"></i> Unpublish':'<i class="fas fa-circle-notch font-size-16 text-primary me-1"></i> Publish'!!}</a></li>
-                                                </ul>
-                                        @endif
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a href="{{ route('admin.users.edit',encrypt($user->id))}}" class="dropdown-item"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>
+                                            {{-- <li><a href="{{ route('admin.users.destroy',encrypt($user->id))}}" class="dropdown-item"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li> --}}
+                                            @if(Auth::id()!=$user->id || $user->id!=Utility::ADMIN_ID)
+                                                <li><a href="#" class="dropdown-item" data-plugin="delete-data" data-target-form="#form_delete_{{ $loop->iteration }}"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>
+                                            @endif
+                                            <form id="form_delete_{{ $loop->iteration }}" method="POST" action="{{ route('admin.users.destroy',encrypt($user->id))}}">
+                                                @csrf
+                                                <input type="hidden" name="_method" value="DELETE" />
+                                            </form>
+                                            <li><a class="dropdown-item" href="{{ route('admin.users.changeStatus',encrypt($user->id))}}"><i class="mdi mdi-cursor-pointer font-size-16 text-success me-1"></i> {{ $user->status?'Deactivate':'Activate'}}</a></li>
+                                        </ul>
                                         </div>
                                     </td>
                                 </tr>

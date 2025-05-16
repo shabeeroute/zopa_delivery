@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class ChangePasswordController extends Controller
 {
@@ -22,11 +21,11 @@ class ChangePasswordController extends Controller
             'new_password' => 'required|confirmed',
         ]);
 
-        if(!Hash::check($request->old_password, Auth::user()->password)){
+        if(!Hash::check($request->old_password, auth()->user()->password)){
             return back()->with("error", "Old Password Doesn't match!");
         }
 
-        User::whereId(Auth::user()->id)->update([
+        User::whereId(auth()->user()->id)->update([
             'password' => Hash::make($request->new_password)
         ]);
 

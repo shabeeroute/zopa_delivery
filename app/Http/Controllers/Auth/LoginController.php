@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Utilities\Utility;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -29,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::ADMIN_HOME;
+    protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.
@@ -41,34 +40,33 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function showLoginForm()
-    {
-        return view('admin.auth.login');
+    public function logout(Request $request) {
+
+        Auth::guard('web')->logout();
+
+        return redirect()->route('login');
     }
 
-    protected function attemptLogin(Request $request)
-    {
-        // Add `status` as an additional condition to the credentials array
-        return $this->guard()->attempt(
-            array_merge($this->credentials($request), ['status' => Utility::ITEM_ACTIVE]),
-            $request->filled('remember')
-        );
-    }
+    // public function login(Request $request)
+    // {
 
-    public function logout(Request $request)
-    {
-        $this->guard()->logout();
+    //     $inputVal = $request->all();
 
-        $request->session()->invalidate();
+    //     $this->validate($request, [
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
 
-        $request->session()->regenerateToken();
-
-        if ($response = $this->loggedOut($request)) {
-            return $response;
-        }
-
-        return $request->wantsJson()
-            ? new JsonResponse([], 204)
-            : redirect($this->redirectTo);
-    }
+    //     if(auth()->attempt(array('email' => $inputVal['email'], 'password' => $inputVal['password']))){
+    //         if (auth()->user()->utype == 1) {
+    //             dd('nasar');
+    //             return redirect()->route('admin.route');
+    //         }else{
+    //             return redirect()->route('home');
+    //         }
+    //     }else{
+    //         return redirect()->route('login')
+    //             ->with('error','Email & Password are incorrect.');
+    //     }
+    // }
 }

@@ -16,7 +16,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
+        \Fruitcake\Cors\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -54,7 +54,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $middlewareAliases = [
+    protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -64,10 +64,14 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
-        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-        'approved.customer' => \App\Http\Middleware\EnsureCustomerIsApproved::class,
+        'admin' => \App\Http\Middleware\Admin::class,
+        'seller.auth' => \App\Http\Middleware\CheckSellerIsLoggedIn::class,
+        'seller.guest' => \App\Http\Middleware\RedirectIfSellerAuthenticated::class,
+        'customer.auth' => \App\Http\Middleware\CheckCustomerIsLoggedIn::class,
+        'customer.guest' => \App\Http\Middleware\RedirectIfCustomerAuthenticated::class,
+        'branch.auth' => \App\Http\Middleware\CheckBranchIsLoggedIn::class,
+        'branch.guest' => \App\Http\Middleware\RedirectIfBranchAuthenticated::class,
+        'driver.auth' => \App\Http\Middleware\CheckDriverIsLoggedIn::class,
+        'driver.guest' => \App\Http\Middleware\RedirectIfDriverAuthenticated::class,
     ];
 }

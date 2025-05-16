@@ -1,20 +1,19 @@
-@extends('admin.layouts.master')
+@extends('layouts.master')
 @section('title') @lang('translation.Add_Role') @endsection
 @section('css')
 <link href="{{ URL::asset('assets/libs/select2/select2.min.css') }}" rel="stylesheet">
 <link href="{{ URL::asset('assets/libs/dropzone/dropzone.min.css') }}" rel="stylesheet">
 @endsection
 @section('content')
-@component('admin.dir_components.breadcrumb')
+@component('components.breadcrumb')
 @slot('li_1') @lang('translation.Role_Management') @endslot
-@slot('li_2') @lang('translation.Role_Management') @endslot
 @slot('title') @lang('translation.Add_Role') @endslot
 @endcomponent
 <div class="row">
     <form method="POST" action="{{ isset($role)? route('admin.roles.update', encrypt($role->id)) : route('admin.roles.store')  }}">
         @csrf
         @if (isset($role))
-
+            {{-- <input type="hidden" name="role_id" value="{{ encrypt($role->id) }}" /> --}}
             <input type="hidden" name="_method" value="PUT" />
         @endif
         <div class="col-12">

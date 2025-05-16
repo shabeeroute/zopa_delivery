@@ -3,7 +3,6 @@
 use App\Models\Bank;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -15,36 +14,63 @@ return new class extends Migration
      */
     public function up()
     {
-        // Schema::create('banks', function (Blueprint $table) {
-        //     $table->bigIncrements('id');
-        //     $table->string('name')->unique();
-        //     $table->boolean('status')->default(1);
-        //     $table->timestamps();
-        // });
+        Schema::create('banks', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name_en')->nullable();
+            $table->string('name_ar')->nullable();
+            $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
 
-        //  // Seed the banks table with major banks in India
-        //  DB::table('banks')->insert([
-        //     ['name' => 'State Bank of India', 'status' => 1],
-        //     ['name' => 'Punjab National Bank', 'status' => 1],
-        //     ['name' => 'HDFC Bank', 'status' => 1],
-        //     ['name' => 'ICICI Bank', 'status' => 1],
-        //     ['name' => 'Axis Bank', 'status' => 1],
-        //     ['name' => 'Bank of Baroda', 'status' => 1],
-        //     ['name' => 'Canara Bank', 'status' => 1],
-        //     ['name' => 'Union Bank of India', 'status' => 1],
-        //     ['name' => 'Indian Bank', 'status' => 1],
-        //     ['name' => 'Bank of India', 'status' => 1],
-        //     ['name' => 'Central Bank of India', 'status' => 1],
-        //     ['name' => 'Indian Overseas Bank', 'status' => 1],
-        //     ['name' => 'IDFC FIRST Bank', 'status' => 1],
-        //     ['name' => 'Kotak Mahindra Bank', 'status' => 1],
-        //     ['name' => 'RBL Bank', 'status' => 1],
-        //     ['name' => 'Standard Chartered Bank', 'status' => 1],
-        //     ['name' => 'DBS Bank India', 'status' => 1],
-        //     ['name' => 'Citi Bank', 'status' => 1],
-        //     ['name' => 'HSBC India', 'status' => 1],
-        //     ['name' => 'IndusInd Bank', 'status' => 1],
-        // ]);
+        Bank::create([
+            'name_en' => 'National Commercial Bank',
+            'name_ar' => 'National Commercial Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Al Rajhi Bank',
+            'name_ar' => 'Al Rajhi Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Samba Financial Group',
+            'name_ar' => 'Samba Financial Group'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Riyad Bank',
+            'name_ar' => 'Riyad Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Banque Saudi Fransi',
+            'name_ar' => 'Banque Saudi Fransi'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Saudi British Bank (SABB)',
+            'name_ar' => 'Saudi British Bank (SABB)'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Arab National Bank',
+            'name_ar' => 'Arab National Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Alinma Bank',
+            'name_ar' => 'Alinma Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Alawwal Bank',
+            'name_ar' => 'Alawwal Bank'
+        ]);
+
+        Bank::create([
+            'name_en' => 'Saudi Investment Bank',
+            'name_ar' => 'Saudi Investment Bank'
+        ]);
     }
 
     /**
@@ -54,6 +80,6 @@ return new class extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('banks');
+        Schema::dropIfExists('banks');
     }
 };
